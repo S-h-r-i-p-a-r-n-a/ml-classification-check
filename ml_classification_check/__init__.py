@@ -26,6 +26,10 @@ from ml_classification_check.reporter      import (
     print_report,
     print_type_warning
 )
+from ml_classification_check.checks.leakage import LeakageChecker
+from ml_classification_check.checks.duplicates import DuplicateChecker
+from ml_classification_check.checks.target_leakage import TargetLeakageChecker
+from ml_classification_check.checks.missing_values import MissingValuesChecker
 
 __version__ = "0.1.0"
 __author__  = "Shriparna Prasad"
@@ -205,27 +209,33 @@ def check_multilabel_classification(
 # ─────────────────────────────────────────────────────
 
 def _run_binary_checks(X_train, X_test, y_train, y_test):
-    """Runs all checks for binary classification."""
     results = []
-    # Phase 2 checks added here
+    results.append(LeakageChecker(X_train, X_test).check())
+    results.append(DuplicateChecker(X_train).check())
+    results.append(TargetLeakageChecker(X_train, y_train).check())
+    results.append(MissingValuesChecker(X_train).check())
     # Phase 3 checks added here
     # Phase 6 checks added here
     return results
 
 
 def _run_multiclass_checks(X_train, X_test, y_train, y_test):
-    """Runs all checks for multiclass classification."""
     results = []
-    # Phase 2 checks added here
+    results.append(LeakageChecker(X_train, X_test).check())
+    results.append(DuplicateChecker(X_train).check())
+    results.append(TargetLeakageChecker(X_train, y_train).check())
+    results.append(MissingValuesChecker(X_train).check())
     # Phase 4 checks added here
     # Phase 6 checks added here
     return results
 
 
 def _run_multilabel_checks(X_train, X_test, y_train, y_test):
-    """Runs all checks for multilabel classification."""
     results = []
-    # Phase 2 checks added here
+    results.append(LeakageChecker(X_train, X_test).check())
+    results.append(DuplicateChecker(X_train).check())
+    results.append(TargetLeakageChecker(X_train, y_train).check())
+    results.append(MissingValuesChecker(X_train).check())
     # Phase 5 checks added here
     # Phase 6 checks added here
     return results
