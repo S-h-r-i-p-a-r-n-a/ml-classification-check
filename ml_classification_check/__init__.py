@@ -30,6 +30,12 @@ from ml_classification_check.checks.leakage import LeakageChecker
 from ml_classification_check.checks.duplicates import DuplicateChecker
 from ml_classification_check.checks.target_leakage import TargetLeakageChecker
 from ml_classification_check.checks.missing_values import MissingValuesChecker
+from ml_classification_check.checks.binary_checks import (
+    BinaryClassValidator,
+    BothClassesChecker,
+    BinaryImbalanceChecker,
+    BinaryLabelTypeChecker
+)
 
 __version__ = "0.1.0"
 __author__  = "Shriparna Prasad"
@@ -210,11 +216,16 @@ def check_multilabel_classification(
 
 def _run_binary_checks(X_train, X_test, y_train, y_test):
     results = []
+    # Phase 2 — Data Integrity
     results.append(LeakageChecker(X_train, X_test).check())
     results.append(DuplicateChecker(X_train).check())
     results.append(TargetLeakageChecker(X_train, y_train).check())
     results.append(MissingValuesChecker(X_train).check())
-    # Phase 3 checks added here
+    # Phase 3 — Binary Checks
+    results.append(BinaryClassValidator(y_train).check())
+    results.append(BothClassesChecker(y_train, y_test).check())
+    results.append(BinaryImbalanceChecker(y_train).check())
+    results.append(BinaryLabelTypeChecker(y_train).check())
     # Phase 6 checks added here
     return results
 

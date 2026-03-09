@@ -18,7 +18,11 @@ class DuplicateChecker(BaseChecker):
 
     def check(self):
         try:
-            duplicate_count = self.X_train.duplicated().sum()
+            # Fill NaN temporarily for comparison
+            # so rows with NaN in same position
+            # are correctly identified as duplicates
+            temp            = self.X_train.fillna("__NaN__")
+            duplicate_count = temp.duplicated().sum()
             total           = len(self.X_train)
             pct             = round((duplicate_count / total) * 100, 2)
 
@@ -53,6 +57,8 @@ class DuplicateChecker(BaseChecker):
                 severity = "warning",
                 check    = "Duplicate Rows",
                 group    = "data_integrity",
-                message  = f"   ⚠️  Could not complete duplicate check: {str(e)}",
+                message  = (
+                    f"   ⚠️  Could not complete duplicate check: {str(e)}"
+                ),
                 fix_code = None
             )
