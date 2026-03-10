@@ -43,6 +43,13 @@ from ml_classification_check.checks.multiclass_checks import (
     MulticlassImbalanceChecker,
     ClassDistributionConsistencyChecker
 )
+from ml_classification_check.checks.multilabel_checks import (
+    LabelMatrixFormatChecker,
+    PerLabelImbalanceChecker,
+    EmptyLabelsChecker,
+    LabelDensityChecker,
+    RareLabelCombinationsChecker
+)
 
 __version__ = "0.1.0"
 __author__  = "Shriparna Prasad"
@@ -258,10 +265,16 @@ def _run_multiclass_checks(X_train, X_test, y_train, y_test):
 
 def _run_multilabel_checks(X_train, X_test, y_train, y_test):
     results = []
+    # Phase 2 — Data Integrity
     results.append(LeakageChecker(X_train, X_test).check())
     results.append(DuplicateChecker(X_train).check())
     results.append(TargetLeakageChecker(X_train, y_train).check())
     results.append(MissingValuesChecker(X_train).check())
-    # Phase 5 checks added here
+    # Phase 5 — Multilabel Checks
+    results.append(LabelMatrixFormatChecker(y_train).check())
+    results.append(PerLabelImbalanceChecker(y_train).check())
+    results.append(EmptyLabelsChecker(y_train).check())
+    results.append(LabelDensityChecker(y_train).check())
+    results.append(RareLabelCombinationsChecker(y_train).check())
     # Phase 6 checks added here
     return results
