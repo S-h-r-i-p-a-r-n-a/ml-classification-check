@@ -36,6 +36,13 @@ from ml_classification_check.checks.binary_checks import (
     BinaryImbalanceChecker,
     BinaryLabelTypeChecker
 )
+from ml_classification_check.checks.multiclass_checks import (
+    AllClassesInTrainChecker,
+    UnseenTestClassesChecker,
+    MinSamplesPerClassChecker,
+    MulticlassImbalanceChecker,
+    ClassDistributionConsistencyChecker
+)
 
 __version__ = "0.1.0"
 __author__  = "Shriparna Prasad"
@@ -232,11 +239,19 @@ def _run_binary_checks(X_train, X_test, y_train, y_test):
 
 def _run_multiclass_checks(X_train, X_test, y_train, y_test):
     results = []
+    # Phase 2 — Data Integrity
     results.append(LeakageChecker(X_train, X_test).check())
     results.append(DuplicateChecker(X_train).check())
     results.append(TargetLeakageChecker(X_train, y_train).check())
     results.append(MissingValuesChecker(X_train).check())
-    # Phase 4 checks added here
+    # Phase 4 — Multiclass Checks
+    results.append(AllClassesInTrainChecker(y_train).check())
+    results.append(UnseenTestClassesChecker(y_train, y_test).check())
+    results.append(MinSamplesPerClassChecker(y_train).check())
+    results.append(MulticlassImbalanceChecker(y_train).check())
+    results.append(ClassDistributionConsistencyChecker(
+        y_train, y_test).check()
+    )
     # Phase 6 checks added here
     return results
 
