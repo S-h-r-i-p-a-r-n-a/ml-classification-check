@@ -50,6 +50,12 @@ from ml_classification_check.checks.multilabel_checks import (
     LabelDensityChecker,
     RareLabelCombinationsChecker
 )
+from ml_classification_check.checks.feature_checks import (
+    ConstantColumnsChecker,
+    FeatureScalingChecker,
+    DistributionShiftChecker,
+    CorrelatedFeaturesChecker
+)
 
 __version__ = "0.1.0"
 __author__  = "Shriparna Prasad"
@@ -240,7 +246,11 @@ def _run_binary_checks(X_train, X_test, y_train, y_test):
     results.append(BothClassesChecker(y_train, y_test).check())
     results.append(BinaryImbalanceChecker(y_train).check())
     results.append(BinaryLabelTypeChecker(y_train).check())
-    # Phase 6 checks added here
+    # Phase 6 — Feature Quality
+    results.append(ConstantColumnsChecker(X_train).check())
+    results.append(FeatureScalingChecker(X_train).check())
+    results.append(DistributionShiftChecker(X_train, X_test).check())
+    results.append(CorrelatedFeaturesChecker(X_train).check())
     return results
 
 
@@ -259,7 +269,11 @@ def _run_multiclass_checks(X_train, X_test, y_train, y_test):
     results.append(ClassDistributionConsistencyChecker(
         y_train, y_test).check()
     )
-    # Phase 6 checks added here
+    # Phase 6 — Feature Quality
+    results.append(ConstantColumnsChecker(X_train).check())
+    results.append(FeatureScalingChecker(X_train).check())
+    results.append(DistributionShiftChecker(X_train, X_test).check())
+    results.append(CorrelatedFeaturesChecker(X_train).check())
     return results
 
 
@@ -276,5 +290,9 @@ def _run_multilabel_checks(X_train, X_test, y_train, y_test):
     results.append(EmptyLabelsChecker(y_train).check())
     results.append(LabelDensityChecker(y_train).check())
     results.append(RareLabelCombinationsChecker(y_train).check())
-    # Phase 6 checks added here
+    # Phase 6 — Feature Quality
+    results.append(ConstantColumnsChecker(X_train).check())
+    results.append(FeatureScalingChecker(X_train).check())
+    results.append(DistributionShiftChecker(X_train, X_test).check())
+    results.append(CorrelatedFeaturesChecker(X_train).check())
     return results
